@@ -1,6 +1,12 @@
 {% extends 'blog/base.html' %}
 
+<h5>user.</h5>
 {% block main_area %}
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or user.is_staff %}
+            <a class="btn btn-outline-secondary float-right" href="/blog/create_post/" role="button"><i class="fas fa-pen"></i>&nbsp;&nbsp;New Post</a>
+        {% endif %}
+    {% endif %}
     <h1>Blog {% if category %} postings with category {{ category }}</h1>
     {% endif %}
     {% if tag %} postings with tag {{ tag }}
@@ -15,10 +21,10 @@
             {% endif %}
             <div class="card-body">
                 <h2 class="card-title">{{ p.title}} ({{ p.category }})</h2>
-                <p class="card-text">{{ p.content | truncatewords:45 }}</p>
+                <h5 class="card-text">{{ p.content | truncatewords:45 }}</h5>
                 <a href="{{ p.get_absolute_url }}" class="btn btn-outline-secondary">Read More &rarr;</a>
             </div>
-            <div class="card-footer text-muted">
+            <div class="card-footer text-muted" style = font-size:20px>
                 Posted on {{ p.created_at}} by
                 <a href="#">{{ p.author }}</a>
             </div>
