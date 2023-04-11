@@ -1,12 +1,32 @@
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Post, Category, Tag
 
 
+class PostUpdate(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ['title', 'content', 'head_image', 'file_upload', 'category', 'tag']
+
+    template_name = "blog/post_form_update.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(PostUpdate, self).get_context_data()
+        context['categories'] = Category.objects.all()
+        context['no_category_count'] = Post.objects.filter(category=None).count()
+        return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user == self.get_object().author:
+            return super(PostUpdate, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+
+
 class PostCreate(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Post
-    fields = ['title', 'content', 'head_image', 'file_upload' , 'category', 'tag']
+    fields = ['title', 'content', 'head_image', 'file_upload', 'category', 'tag']
 
     def test_func(self):
         return self.request.user.is_superuser or self.request.user.is_staff
