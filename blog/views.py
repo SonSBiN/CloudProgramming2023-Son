@@ -1,6 +1,11 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView
 from .models import Post, Category, Tag
+
+
+class PostCreate(CreateView):
+    model = Post
+    fields = ['title', 'content', 'head_image', 'file_upload', 'author', 'category', 'tag']
 
 
 class PostList(ListView):
