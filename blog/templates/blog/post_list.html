@@ -4,35 +4,38 @@
 {% block main_area %}
     {% if user.is_authenticated %}
         {% if user.is_superuser or user.is_staff %}
-            <a class="btn btn-outline-secondary float-right" href="/blog/create_post/" role="button"><i class="fas fa-pen"></i>&nbsp;&nbsp;New Post</a>
+            <a class="btn btn-outline-secondary float-right" href="/blog/create_post/" role="button"><i
+                    class="fas fa-pen"></i>&nbsp;&nbsp;New Post</a>
         {% endif %}
     {% endif %}
     <h1>Blog {% if category %} postings with category {{ category }}</h1>
     {% endif %}
     {% if tag %} postings with tag {{ tag }}
     {% endif %}
-    {% for p in post_list %}
-        <!-- Blog Post -->
-        <div class="card mb-4">
-            {% if p.head_image %}
-                <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image">
-            {% else %}
-                <img class="card-img-top" src="https://picsum.photos/800/200" alt="random_image">
-            {% endif %}
-            <div class="card-body">
-                <h2 class="card-title">{{ p.title}} ({{ p.category }})</h2>
-                <h5 class="card-text">{{ p.content | truncatewords:45 }}</h5>
-                <a href="{{ p.get_absolute_url }}" class="btn btn-outline-secondary">Read More &rarr;</a>
+    <div>
+        {% for p in post_list %}
+            <!-- Blog Post -->
+            <div class="card mb-4">
+                {% if p.head_image %}
+                    <img class="card-img-top" src="{{ p.head_image.url }}" alt="{{ p }} head image">
+                {% else %}
+                    <img class="card-img-top" src="https://picsum.photos/800/200" alt="random_image">
+                {% endif %}
+                <div class="card-body">
+                    <h2 class="card-title">{{ p.title }} ({{ p.category }})</h2>
+                    <p class="card-text">{{ p.get_content_markdown | truncatewords_html:45 | safe }}</p>
+                    <a href="{{ p.get_absolute_url }}" class="btn btn-outline-secondary">Read More &rarr;</a>
+                </div>
+                <div class="card-footer text-muted" style=font-size:20px>
+                    Posted on {{ p.created_at }} by
+                    <a href="#">{{ p.author }}</a>
+                </div>
             </div>
-            <div class="card-footer text-muted" style = font-size:20px>
-                Posted on {{ p.created_at}} by
-                <a href="#">{{ p.author }}</a>
-            </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
 
+    </div>
 
-                <!-- Pagination -->
+    <!-- Pagination -->
     <ul class="pagination justify-content-center mb-4">
         <li class="page-item">
             <a class="page-link" href="#">&larr; Older</a>
